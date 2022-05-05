@@ -1,0 +1,43 @@
+---
+title: "Porfolio 7 - Graphing Study 2"
+author: "Adam"
+date: "5/5/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+> The goal of this portfolio is to create graphs to display the findings from Study 2.
+
+## Setting up
+
+```{r packages, echo=TRUE, message=FALSE}
+library('reshape2')
+library('ggplot2')
+library('dplyr')
+library('Rcpp')
+library('readr')
+library('tidyverse')
+library('psych')
+```
+
+#### Bringing in the data
+
+```{r loading data, echo=TRUE, collapse=TRUE, message=FALSE}
+study1 <- read_csv("Study2_data_R_cleaned.csv")
+
+# Ensuring the dataframe is a tibble.
+as_tibble(study1)
+
+#Taking a look at the table.
+View(study1)
+```
+
+
+
+
+
+#### Finishing up
+
