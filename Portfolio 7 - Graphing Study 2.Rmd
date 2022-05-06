@@ -54,18 +54,18 @@ I want to create bar graphs for each of the variables of interest. We created gr
 
 I will be using a lot of code in my graphs, so I've gone and made some shortcuts to plug in as I go. This idea was taken from the Youtube channel "Statistics of Doom". The point is to save me a lot of extra code typing that I could mess up, and to make the code look a little nicer.
 
-```{r test format code}
+```{r graph formatting code}
 vis_col =   
-  scale_fill_manual(values = c( #Color codes
-    "control" = "#fece3d",
-    "prompted discussion" = "#fd8d3c",
-    "prompted disclosure" = "#31a354"))
+  scale_fill_manual(values = c( #Color codes for the conditions.
+    "Control" = "#fece3d",
+    "Prompted discussion" = "#fd8d3c",
+    "Prompted disclosure" = "#31a354"))
 
-vis_theme =  theme(panel.background = element_blank(),
-                   panel.grid.major.y = element_line(color = "#DAE1E7"),
-axis.line = element_line(color = "black")) # removes some of the ugliness from the graph
+vis_theme =  theme(panel.background = element_blank(), #makes the background invisible
+                   panel.grid.major.y = element_line(color = "#DAE1E7"), #makes the y-axis gridlines appear, but not x-axis
+axis.line = element_line(color = "black")) #makes the axis appear in a dark black color
 
-vis_text =     theme(
+vis_text =     theme( #trbl are the margin signs, top, right, bottom, left
     plot.title = element_text(size = 20, margin = margin(b = 5)),
     plot.subtitle = element_text(size = 12, margin = margin(b= 10)),
     axis.text = element_text(size = 12),
@@ -80,92 +80,144 @@ vis_text =     theme(
 
 #### Closeness
 
-Below was the first successful version of the graph that I made. Very basic, but served as a starting point.
+Below was the first successful version of the graph that I made. Very basic. Also, very wrong.
 
-```{r closeness graph}
+```{r first closeness graph}
 ggplot(data = study1_graph, mapping = aes(x = condition, y= close_comp3)) +
   geom_bar(position= position_dodge(), stat= 'identity') 
 ```
 
 
+After a lot of iteration, I got to this. The code is much more complex, and it pretty closely mirrors the graphs we actually used in my thesis. Explanations of the code are in-line.
 
-The next version is much more complex, but also much nicer to look at.
 
-```{r shortcut code practice}
-ggplot(data = study1_graph, mapping = aes(x = condition, y= close_comp3, fill = condition)) + #Fill is starting the color code nonsense
-  stat_summary(fun = mean, geom= "bar") + #This is making it measure the mean of y axis
-  stat_summary(fun.data = mean_cl_normal, geom= "errorbar", width =.2, inherit.aes = TRUE)+ #mean_cl_normal and geom are making it error bars
-  guides(fill = FALSE) + # Lets me change the color myself
+```{r closeness graph}
+ggplot(data = study1_graph, aes(x = condition, y= close_comp3, fill = condition)) + #Fill is starting the color code nonsense
+  stat_summary(fun = mean, geom= "bar") + #This is making it measure the mean on the y-axis
+  stat_summary(fun.data = mean_cl_normal, geom= "errorbar", width =.2, inherit.aes = TRUE)+ #mean_cl_normal and geom are making the error bars appear, inherit.aes makes it copy the aes from the beginning, e.g, fill
+  guides(fill = FALSE) + # Allows the aes colors to be done manually.
+  scale_y_continuous(limits = c(0, 5)) + #Affixes the scale to the full range of the measure
   vis_col + #This, vis_theme, and vis_text are shortcuts. See above.
   vis_theme + 
   labs(x = "Condition",
-  y= "Closeness",
+  y= NULL,
   title= "Closeness",
   subtitle= "Scale (1-5)") + # The terminology for the labels
-  annotate("text", x="control", y=1, label= "2.80", size=5) + #these lines add the means to the graph
-  annotate("text", x= "prompted discussion", y=1, label= "2.65", size=5) +
-  annotate("text", x= "prompted disclosure", y=1, label= "2.93", size=5) +
+  annotate("text", x="Control", y=1, label= "2.80", size=5) + #these lines add the means to the graph
+  annotate("text", x= "Prompted discussion", y=1, label= "2.65", size=5) +
+  annotate("text", x= "Prompted disclosure", y=1, label= "2.93", size=5) +
+  vis_text
+```
+
+For the next graphs, I am wantonly stealing this code and making the modifications for each variable.
+
+#### Institutional belonging
+
+```{r institutional belonging code}
+ggplot(data = study1_graph, mapping = aes(x = condition, y= school_belong_comp4, fill = condition)) + 
+  stat_summary(fun = mean, geom= "bar") + 
+  stat_summary(fun.data = mean_cl_normal, geom= "errorbar", width =.2, inherit.aes = TRUE)+ 
+  guides(fill = FALSE) + 
+  scale_y_continuous(limits = c(0, 7)) +
+  vis_col + 
+  vis_theme + 
+  labs(x = "Condition",
+  y= NULL,
+  title= "School belonging",
+  subtitle= "Scale (1-7)") + 
+  annotate("text", x="Control", y=1, label= "5.34", size=5) +
+  annotate("text", x= "Prompted discussion", y=1, label= "5.70", size=5) +
+  annotate("text", x= "Prompted disclosure", y=1, label= "5.41", size=5) +
+  vis_text
+```
+
+
+#### Class belonging
+
+```{r class belonging code}
+ggplot(data = study1_graph, mapping = aes(x = condition, y= class_belong_comp4, fill = condition)) + 
+  stat_summary(fun = mean, geom= "bar") + 
+  stat_summary(fun.data = mean_cl_normal, geom= "errorbar", width =.2, inherit.aes = TRUE)+ 
+  guides(fill = FALSE) + 
+  scale_y_continuous(limits = c(0, 7)) +
+  vis_col + 
+  vis_theme + 
+  labs(x = "Condition",
+  y= NULL,
+  title= "Class belonging",
+  subtitle= "Scale (1-7)") + 
+  annotate("text", x="Control", y=1, label= "5.47", size=5) +
+  annotate("text", x= "Prompted discussion", y=1, label= "6.08", size=5) +
+  annotate("text", x= "Prompted disclosure", y=1, label= "5.49", size=5) +
   vis_text
 ```
 
 
 
-
-
-#### Class belonging
-
-
-
-#### Institutional belonging
-
-
-
 #### Intrinsic motivation
 
-
+```{r intrinsic motivation code}
+ggplot(data = study1_graph, mapping = aes(x = condition, y= motiv_intrins_comp2, fill = condition)) + 
+  stat_summary(fun = mean, geom= "bar") + 
+  stat_summary(fun.data = mean_cl_normal, geom= "errorbar", width =.2, inherit.aes = TRUE)+ 
+  guides(fill = FALSE) + 
+  scale_y_continuous(limits = c(0, 5)) +
+  vis_col + 
+  vis_theme + 
+  labs(x = "Condition",
+  y= NULL,
+  title= "Subject Area Motivation: Intrinsic",
+  subtitle= "Scale (1-5)") + 
+  annotate("text", x="Control", y=1, label= "3.45", size=5) +
+  annotate("text", x= "Prompted discussion", y=1, label= "3.70", size=5) +
+  annotate("text", x= "Prompted disclosure", y=1, label= "3.47", size=5) +
+  vis_text
+```
 
 #### Utility motivation
 
-
+```{r utility motivation code}
+ggplot(data = study1_graph, mapping = aes(x = condition, y= motiv_util_comp3, fill = condition)) + 
+  stat_summary(fun = mean, geom= "bar") + 
+  stat_summary(fun.data = mean_cl_normal, geom= "errorbar", width =.2, inherit.aes = TRUE)+ 
+  guides(fill = FALSE) + 
+  scale_y_continuous(limits = c(0, 5)) +
+  vis_col + 
+  vis_theme + 
+  labs(x = "Condition",
+  y= NULL,
+  title= "Subject Area Motivation: Utility",
+  subtitle= "Scale (1-5)") + 
+  annotate("text", x="Control", y=1, label= "3.27", size=5) +
+  annotate("text", x= "Prompted discussion", y=1, label= "3.76", size=5) +
+  annotate("text", x= "Prompted disclosure", y=1, label= "3.55", size=5) +
+  vis_text
+```
 
 #### Quiz performance
 
+This one required a change to the scale, since it is a grade, meaning the scale needed to run from 0 to .9
 
+```{r intrinsic motivation code}
+ggplot(data = study1_graph, mapping = aes(x = condition, y= quiz_average, fill = condition)) + 
+  stat_summary(fun = mean, geom= "bar") + 
+  stat_summary(fun.data = mean_cl_normal, geom= "errorbar", width =.2, inherit.aes = TRUE)+ 
+  guides(fill = FALSE) + 
+  scale_y_continuous(limits = c(0, .9)) +
+  vis_col + 
+  vis_theme + 
+  labs(x = "Condition",
+  y= NULL,
+  title= "Quiz Performance",
+  subtitle= "Scale (1-9)") + 
+  annotate("text", x="Control", y=.20, label= "6.91", size=5) +
+  annotate("text", x= "Prompted discussion", y=.20, label= "7.14", size=5) +
+  annotate("text", x= "Prompted disclosure", y=.20, label= "7.12", size=5) +
+  vis_text
+```
 
 
 #### Finishing up
 
-> In case I need it, this forces the graph into the correct order.
-
-+ scale_x_discrete(limits=c("control", "prompted discussion", "prompted disclosure"))
-
-
-# In case I need to make the lm in this file.
-First up, I need to bring the data into the file properly, which means using code from portfolio 6.
-```{r ensuring condition is character vector}
-study1$condition <- as.character(study1$condition)
-
-class(study1$condition)
-```
-
-
-```{r closeness model}
-lm_closeness = lm(close_comp3~ condition + gender_male_dummy + race_asian + race_black + 
-    race_multiracial + race_hispanic + section_greene + section_verbecke + section_cameron + know_prior_study + 
-    class_know_prior,
-                     data = study1)
-
-#Included to make comparisons to make sure the data is correct.
-summary(lm_closeness)
-
-```
-
-
-```{r post-hoc closeness}
-emmeans(lm_closeness, pairwise ~ condition, adjust= "holm")
-
-```
-
-So, we should see a significant difference between prompted disclosure and prompted discussion.
 
 
