@@ -21,6 +21,7 @@ library('Rcpp')
 library('readr')
 library('tidyverse')
 library('psych')
+library('emmeans')
 ```
 
 #### Bringing in the data
@@ -35,9 +36,136 @@ as_tibble(study1)
 View(study1)
 ```
 
+The code below subsets the data that I'm working with only to the parts I'm interested in. As well, it renames the condition variable to be easier to understand, and ensures that it is a factor.
+
+```{r smaller data to work with}
+study1_graph <- study1 %>%
+        select(class_belong_comp4, school_belong_comp4, motiv_intrins_comp2, motiv_util_comp3, close_comp3, quiz_average,  condition)
+
+study1_graph$condition = factor(study1_graph$condition,
+                                levels = c(0,1,2),
+                                labels = c("Control", "Prompted discussion", "Prompted disclosure")
+                                )
+```
+
+### Creating graphs
+
+I want to create bar graphs for each of the variables of interest. We created graphs that I used for my thesis, so my goal is going to be to recreate those. Specifically; Closeness, Institutional belonging, Class belonging, Intrinsic motivation, Utility motivation, and Quiz performance.
+
+I will be using a lot of code in my graphs, so I've gone and made some shortcuts to plug in as I go. This idea was taken from the Youtube channel "Statistics of Doom". The point is to save me a lot of extra code typing that I could mess up, and to make the code look a little nicer.
+
+```{r test format code}
+vis_col =   
+  scale_fill_manual(values = c( #Color codes
+    "control" = "#fece3d",
+    "prompted discussion" = "#fd8d3c",
+    "prompted disclosure" = "#31a354"))
+
+vis_theme =  theme(panel.background = element_blank(),
+                   panel.grid.major.y = element_line(color = "#DAE1E7"),
+axis.line = element_line(color = "black")) # removes some of the ugliness from the graph
+
+vis_text =     theme(
+    plot.title = element_text(size = 20, margin = margin(b = 5)),
+    plot.subtitle = element_text(size = 12, margin = margin(b= 10)),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 16, hjust = 1),    
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10)),
+    axis.text.y = element_text(margin = margin(r = 5)),
+    axis.text.x = element_text(margin = margin(t = 5)),
+  )
+```
+
+
+#### Closeness
+
+Below was the first successful version of the graph that I made. Very basic, but served as a starting point.
+
+```{r closeness graph}
+ggplot(data = study1_graph, mapping = aes(x = condition, y= close_comp3)) +
+  geom_bar(position= position_dodge(), stat= 'identity') 
+```
+
+
+
+The next version is much more complex, but also much nicer to look at.
+
+```{r shortcut code practice}
+ggplot(data = study1_graph, mapping = aes(x = condition, y= close_comp3, fill = condition)) + #Fill is starting the color code nonsense
+  stat_summary(fun = mean, geom= "bar") + #This is making it measure the mean of y axis
+  stat_summary(fun.data = mean_cl_normal, geom= "errorbar", width =.2, inherit.aes = TRUE)+ #mean_cl_normal and geom are making it error bars
+  guides(fill = FALSE) + # Lets me change the color myself
+  vis_col + #This, vis_theme, and vis_text are shortcuts. See above.
+  vis_theme + 
+  labs(x = "Condition",
+  y= "Closeness",
+  title= "Closeness",
+  subtitle= "Scale (1-5)") + # The terminology for the labels
+  annotate("text", x="control", y=1, label= "2.80", size=5) + #these lines add the means to the graph
+  annotate("text", x= "prompted discussion", y=1, label= "2.65", size=5) +
+  annotate("text", x= "prompted disclosure", y=1, label= "2.93", size=5) +
+  vis_text
+```
+
+
+
+
+
+#### Class belonging
+
+
+
+#### Institutional belonging
+
+
+
+#### Intrinsic motivation
+
+
+
+#### Utility motivation
+
+
+
+#### Quiz performance
 
 
 
 
 #### Finishing up
+
+> In case I need it, this forces the graph into the correct order.
+
++ scale_x_discrete(limits=c("control", "prompted discussion", "prompted disclosure"))
+
+
+# In case I need to make the lm in this file.
+First up, I need to bring the data into the file properly, which means using code from portfolio 6.
+```{r ensuring condition is character vector}
+study1$condition <- as.character(study1$condition)
+
+class(study1$condition)
+```
+
+
+```{r closeness model}
+lm_closeness = lm(close_comp3~ condition + gender_male_dummy + race_asian + race_black + 
+    race_multiracial + race_hispanic + section_greene + section_verbecke + section_cameron + know_prior_study + 
+    class_know_prior,
+                     data = study1)
+
+#Included to make comparisons to make sure the data is correct.
+summary(lm_closeness)
+
+```
+
+
+```{r post-hoc closeness}
+emmeans(lm_closeness, pairwise ~ condition, adjust= "holm")
+
+```
+
+So, we should see a significant difference between prompted disclosure and prompted discussion.
+
 
