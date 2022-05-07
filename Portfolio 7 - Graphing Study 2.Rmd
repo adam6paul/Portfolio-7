@@ -24,7 +24,7 @@ library('psych')
 library('emmeans')
 ```
 
-#### Bringing in the data
+### Bringing in the data
 
 ```{r loading data, echo=TRUE, collapse=TRUE, message=FALSE}
 study1 <- read_csv("Study2_data_R_cleaned.csv")
@@ -48,7 +48,7 @@ study1_graph$condition = factor(study1_graph$condition,
                                 )
 ```
 
-### Creating graphs
+## Creating graphs
 
 I want to create bar graphs for each of the variables of interest. We created graphs that I used for my thesis, so my goal is going to be to recreate those. Specifically; Closeness, Institutional belonging, Class belonging, Intrinsic motivation, Utility motivation, and Quiz performance.
 
@@ -78,7 +78,7 @@ vis_text =     theme( #trbl are the margin signs, top, right, bottom, left
 ```
 
 
-#### Closeness
+### Closeness
 
 Below was the first successful version of the graph that I made. Very basic. Also, very wrong.
 
@@ -111,9 +111,9 @@ ggplot(data = study1_graph, aes(x = condition, y= close_comp3, fill = condition)
 
 For the next graphs, I am wantonly stealing this code and making the modifications for each variable.
 
-#### Institutional belonging
+### School belonging
 
-```{r institutional belonging code}
+```{r school belonging graph}
 ggplot(data = study1_graph, mapping = aes(x = condition, y= school_belong_comp4, fill = condition)) + 
   stat_summary(fun = mean, geom= "bar") + 
   stat_summary(fun.data = mean_cl_normal, geom= "errorbar", width =.2, inherit.aes = TRUE)+ 
@@ -132,9 +132,9 @@ ggplot(data = study1_graph, mapping = aes(x = condition, y= school_belong_comp4,
 ```
 
 
-#### Class belonging
+### Class belonging
 
-```{r class belonging code}
+```{r class belonging graph}
 ggplot(data = study1_graph, mapping = aes(x = condition, y= class_belong_comp4, fill = condition)) + 
   stat_summary(fun = mean, geom= "bar") + 
   stat_summary(fun.data = mean_cl_normal, geom= "errorbar", width =.2, inherit.aes = TRUE)+ 
@@ -154,9 +154,9 @@ ggplot(data = study1_graph, mapping = aes(x = condition, y= class_belong_comp4, 
 
 
 
-#### Intrinsic motivation
+### Intrinsic motivation
 
-```{r intrinsic motivation code}
+```{r intrinsic motivation graph}
 ggplot(data = study1_graph, mapping = aes(x = condition, y= motiv_intrins_comp2, fill = condition)) + 
   stat_summary(fun = mean, geom= "bar") + 
   stat_summary(fun.data = mean_cl_normal, geom= "errorbar", width =.2, inherit.aes = TRUE)+ 
@@ -174,9 +174,9 @@ ggplot(data = study1_graph, mapping = aes(x = condition, y= motiv_intrins_comp2,
   vis_text
 ```
 
-#### Utility motivation
+### Utility motivation
 
-```{r utility motivation code}
+```{r utility motivation graph}
 ggplot(data = study1_graph, mapping = aes(x = condition, y= motiv_util_comp3, fill = condition)) + 
   stat_summary(fun = mean, geom= "bar") + 
   stat_summary(fun.data = mean_cl_normal, geom= "errorbar", width =.2, inherit.aes = TRUE)+ 
@@ -194,11 +194,11 @@ ggplot(data = study1_graph, mapping = aes(x = condition, y= motiv_util_comp3, fi
   vis_text
 ```
 
-#### Quiz performance
+### Quiz performance
 
 This one required a change to the scale, since it is a grade, meaning the scale needed to run from 0 to .9
 
-```{r intrinsic motivation code}
+```{r quiz performance graph}
 ggplot(data = study1_graph, mapping = aes(x = condition, y= quiz_average, fill = condition)) + 
   stat_summary(fun = mean, geom= "bar") + 
   stat_summary(fun.data = mean_cl_normal, geom= "errorbar", width =.2, inherit.aes = TRUE)+ 
@@ -217,7 +217,7 @@ ggplot(data = study1_graph, mapping = aes(x = condition, y= quiz_average, fill =
 ```
 
 
-#### Finishing up
+## Finishing up
 
-
+This code served as an excellent test-bed in making graphs in a way different from what we have done in class, and also showed me about piping in code that I wrote myself.
 
